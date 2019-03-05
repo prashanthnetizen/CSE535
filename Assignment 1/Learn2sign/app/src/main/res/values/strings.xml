@@ -22,12 +22,12 @@
         <item>Michigan</item>
         <item>Minnesota</item>
         <item>Nevada</item>
-        <item>NewJersey</item>
-        <item>NewMexico</item>
-        <item>NewYork</item>
+        <item>New_Jersey</item>
+        <item>New_Mexico</item>
+        <item>New_York</item>
         <item>Ohio</item>
         <item>Pennsylvania</item>
-        <item>SouthCarolina</item>
+        <item>South_Carolina</item>
         <item>Texas</item>
         <item>Utah</item>
         <item>Washington</item>
@@ -39,4 +39,9 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="gotoupload">GotoUpload</string>
+    <string name="learn_checkbox">Learn</string>
+    <string name="practice_checkbox">Practice</string>
+    <string name="cancel">Re-Record</string>
+    <string name="upload">Upload</string>
+    <string name="record">Record</string>
 </resources>

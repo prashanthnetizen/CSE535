@@ -33,6 +33,11 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.facebook.stetho.Stetho;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,6 +52,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.internal.Utils;
+import cz.msebera.android.httpclient.Header;
 
 import static android.provider.MediaStore.EXTRA_DURATION_LIMIT;
 import static android.provider.MediaStore.EXTRA_MEDIA_TITLE;
@@ -114,21 +120,65 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Stetho.initializeWithDefaults(this);
 
+        LoggerEntity.loggerEntity(MainActivity.class.getName());
+
         rb_learn.setChecked(true);
         bt_cancel.setVisibility(View.GONE);
         bt_send.setVisibility(View.GONE);
+
         rg_practice_learn.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if(checkedId==rb_learn.getId()) {
-                    Toast.makeText(getApplicationContext(),"Learn",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Learn Mode ON",Toast.LENGTH_SHORT).show();
                     vv_video_learn.setVisibility(View.VISIBLE);
                     vv_video_learn.start();
                     time_started = System.currentTimeMillis();
                 } else if ( checkedId==rb_practice.getId()) {
-                    Toast.makeText(getApplicationContext(),"Practice",Toast.LENGTH_SHORT).show();
-                    vv_video_learn.setVisibility(View.GONE);
+                    LoggerEntity.logActivity("CLICK_INFO","Practice Mode Radio button is Clicked");
+                        AsyncHttpClient  client = new AsyncHttpClient();
+                        RequestParams params = new RequestParams();
+                        params.put("id",getSharedPreferences(getPackageName(),Context.MODE_PRIVATE).getString(INTENT_ID,"00000000"));
+                        client.post("http://"+sp_ip_address.getSelectedItem()+"/check_video_count.php", params, new AsyncHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody){
+                                try{
+                                    Integer count = Integer.parseInt(new String(responseBody,"UTF-8").trim());
+                                    if(statusCode == 200 && count >= 75 ){
+                                        Toast.makeText(getApplicationContext(),"Practice Mode ON",Toast.LENGTH_SHORT).show();
+                                        vv_video_learn.setVisibility(View.GONE);
+                                        startActivity(new Intent(getApplicationContext(),PracticeActivity.class));
+                                    } else {
+                                        Toast.makeText(getApplicationContext(),"Learned Videos are less than 75",Toast.LENGTH_SHORT).show();
+                                        rb_learn.setChecked(true);
+                                    }
+                                }
+                                catch(IOException io){
+                                    io.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                try{
+                                    if(responseBody!=null) {
+                                        Log.d("MainActivity", "  " + new String(responseBody, "UTF-8"));
+                                    }
+                                    if(statusCode == 404){
+                                        Toast.makeText(getApplicationContext(),"There isn't any folder found for the user online.",Toast.LENGTH_SHORT).show();
+                                    } else{
+                                        Toast.makeText(getApplicationContext(),"Please get connected to the recommended VPN settings and try again",Toast.LENGTH_SHORT).show();
+                                    }
+                                    rb_learn.setChecked(true);
+                                }   catch(IOException io){
+                                    io.printStackTrace();
+                                }
+                            }
+                        });
+
+
+
                 }
             }
         });
@@ -208,9 +258,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-
+        rb_learn.setChecked(true);
+        vv_video_learn.setVisibility(View.VISIBLE);
         vv_video_learn.start();
         time_started = System.currentTimeMillis();
+        LoggerEntity.modifyClassName(MainActivity.class.getName());
         super.onResume();
 
     }
@@ -248,17 +300,17 @@ public class MainActivity extends AppCompatActivity {
             path = "android.resource://" + getPackageName() + "/" + R.raw.minnesota;
         }else if (text.equals("Nevada")) {
             path = "android.resource://" + getPackageName() + "/" + R.raw.nevada;
-        }else if (text.equals("NewJersey")) {
+        }else if (text.equals("New_Jersey")) {
             path = "android.resource://" + getPackageName() + "/" + R.raw.new_jersey;
-        }else if (text.equals("NewMexico")) {
+        }else if (text.equals("New_Mexico")) {
             path = "android.resource://" + getPackageName() + "/" + R.raw.new_mexico;
-        }else if (text.equals("NewYork")) {
+        }else if (text.equals("New_York")) {
             path = "android.resource://" + getPackageName() + "/" + R.raw.new_york;
         }else if (text.equals("Ohio")) {
             path = "android.resource://" + getPackageName() + "/" + R.raw.ohio;
         }else if (text.equals("Pennsylvania")) {
             path = "android.resource://" + getPackageName() + "/" + R.raw.pennsylvania;
-        }else if (text.equals("SouthCarolina")) {
+        }else if (text.equals("South_Carolina")) {
             path = "android.resource://" + getPackageName() + "/" + R.raw.south_carolina;
         }else if (text.equals("Texas")) {
             path = "android.resource://" + getPackageName() + "/" + R.raw.texas;
@@ -513,6 +565,16 @@ public class MainActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int which) {
                                     sharedPreferences.edit().clear().apply();
                                     File f = new File(Environment.getExternalStorageDirectory(), "Learn2Sign");
+                                    if (f.isDirectory())
+                                    {
+                                        String[] children = f.list();
+                                        for (int i = 0; i < children.length; i++)
+                                        {
+                                            new File(f, children[i]).delete();
+                                        }
+                                    }
+
+                                    f = new File(Environment.getExternalStorageDirectory(), "Learn2Sign_logs");
                                     if (f.isDirectory())
                                     {
                                         String[] children = f.list();
