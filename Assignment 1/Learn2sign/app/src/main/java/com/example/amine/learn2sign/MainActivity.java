@@ -137,47 +137,51 @@ public class MainActivity extends AppCompatActivity {
                     time_started = System.currentTimeMillis();
                 } else if ( checkedId==rb_practice.getId()) {
                     LoggerEntity.logActivity("CLICK_INFO","Practice Mode Radio button is Clicked");
-                        AsyncHttpClient  client = new AsyncHttpClient();
-                        RequestParams params = new RequestParams();
-                        params.put("id",getSharedPreferences(getPackageName(),Context.MODE_PRIVATE).getString(INTENT_ID,"00000000"));
-                        client.post("http://"+sp_ip_address.getSelectedItem()+"/check_video_count.php", params, new AsyncHttpResponseHandler() {
-                            @Override
-                            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody){
-                                try{
-                                    Integer count = Integer.parseInt(new String(responseBody,"UTF-8").trim());
-                                    if(statusCode == 200 && count >= 75 ){
-                                        Toast.makeText(getApplicationContext(),"Practice Mode ON",Toast.LENGTH_SHORT).show();
-                                        vv_video_learn.setVisibility(View.GONE);
-                                        startActivity(new Intent(getApplicationContext(),PracticeActivity.class));
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),"Learned Videos are less than 75",Toast.LENGTH_SHORT).show();
-                                        rb_learn.setChecked(true);
-                                    }
-                                }
-                                catch(IOException io){
-                                    io.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                                try{
-                                    if(responseBody!=null) {
-                                        Log.d("MainActivity", "  " + new String(responseBody, "UTF-8"));
-                                    }
-                                    if(statusCode == 404){
-                                        Toast.makeText(getApplicationContext(),"There isn't any folder found for the user online.",Toast.LENGTH_SHORT).show();
-                                    } else{
-                                        Toast.makeText(getApplicationContext(),"Please get connected to the recommended VPN settings and try again",Toast.LENGTH_SHORT).show();
-                                    }
+                    rb_practice.setEnabled(false);
+                    rb_learn.setEnabled(false);
+                    AsyncHttpClient  client = new AsyncHttpClient();
+                    RequestParams params = new RequestParams();
+                    params.put("id",getSharedPreferences(getPackageName(),Context.MODE_PRIVATE).getString(INTENT_ID,"00000000"));
+                    client.post("http://"+sp_ip_address.getSelectedItem()+"/check_video_count.php", params, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody){
+                            try{
+                                Integer count = Integer.parseInt(new String(responseBody,"UTF-8").trim());
+                                if(statusCode == 200 && count >= 75 ){
+                                    Toast.makeText(getApplicationContext(),"Practice Mode ON",Toast.LENGTH_SHORT).show();
+                                    vv_video_learn.setVisibility(View.GONE);
+                                    startActivity(new Intent(getApplicationContext(),PracticeActivity.class));
+                                } else {
+                                    Toast.makeText(getApplicationContext(),"Learned Videos are less than 75",Toast.LENGTH_SHORT).show();
                                     rb_learn.setChecked(true);
-                                }   catch(IOException io){
-                                    io.printStackTrace();
                                 }
+                                rb_practice.setEnabled(true);
+                                rb_learn.setEnabled(true);
                             }
-                        });
+                            catch(IOException io){
+                                io.printStackTrace();
+                            }
+                        }
 
-
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            try{
+                                if(responseBody!=null) {
+                                    Log.d("MainActivity", "  " + new String(responseBody, "UTF-8"));
+                                }
+                                if(statusCode == 404){
+                                    Toast.makeText(getApplicationContext(),"There isn't any folder found for the user online.",Toast.LENGTH_SHORT).show();
+                                } else{
+                                    Toast.makeText(getApplicationContext(),"Please get connected to the recommended VPN settings and try again",Toast.LENGTH_SHORT).show();
+                                }
+                                rb_practice.setEnabled(true);
+                                rb_learn.setEnabled(true);
+                                rb_learn.setChecked(true);
+                            }   catch(IOException io){
+                                io.printStackTrace();
+                            }
+                        }
+                    });
 
                 }
             }
