@@ -173,6 +173,20 @@ public class PracticeActivity extends AppCompatActivity {
         learnVideo.setOnCompletionListener(onCompletionListener);
         recordVideo.setOnCompletionListener(onCompletionListener);
 
+        recordVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recordVideo.start();
+            }
+        });
+
+        learnVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recordVideo.start();
+            }
+        });
+
 
 
     }
@@ -325,7 +339,7 @@ public class PracticeActivity extends AppCompatActivity {
     public void uploadPracticeVideo() {
         try {
             final File srcFile = new File(returnedURI);
-            File practiceVideo = new File(srcFile.getParent()+"/"+APP_NAME + "_" + states.getSelectedItem() + "_" + Math.round(ratingBar.getRating() * 2) + ".mp4");
+            final File practiceVideo = new File(srcFile.getParent()+"/"+APP_NAME + "_" + states.getSelectedItem() + "_Rated#" + Math.round(ratingBar.getRating() * 2) + ".mp4");
             LoggerEntity.logActivity("CLICK_INFO","User decided to upload the Recorded Video.");
             RequestParams params = new RequestParams();
             AsyncHttpClient client = new AsyncHttpClient();
@@ -337,6 +351,7 @@ public class PracticeActivity extends AppCompatActivity {
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     if (statusCode == 200) {
                         srcFile.delete();
+                        practiceVideo.delete();
                         Toast.makeText(PracticeActivity.this, "Practice Video Uploaded Successfully", Toast.LENGTH_SHORT).show();
                         LoggerEntity.logActivity("SUCCESS","The Practice video uploaded successfully");
                         returnNormal();
@@ -345,7 +360,8 @@ public class PracticeActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                    Toast.makeText(PracticeActivity.this, "Something went wrong. Please try again later.", Toast.LENGTH_SHORT).show();
+                    LoggerEntity.logActivity("FAILURE","Something went wrong. Please try again later.");
                 }
             });
         }catch(IOException io){

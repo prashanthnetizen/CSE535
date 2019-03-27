@@ -33,9 +33,6 @@ public class LoggerEntity {
                     "Group29_Application.log");
             if (!logFile.exists())
                 logFile.createNewFile();*/
-
-            Log.d("StrangerThings","Activity occccc");
-
             classN  = className;
 
             logger = Logger.getLogger(className);
