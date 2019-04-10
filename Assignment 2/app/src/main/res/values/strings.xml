@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ClassifySign</string>
+    <string name="choose_file">Browse File</string>
+    <string name="classify_video">Classify Data</string>
+    <string name="word_classifier">Word Classifier</string>
+    <string name="about">About</string>
+    <string name="detected_word_is">Detected word is</string>
+    <string name="father">Father</string>
+</resources>

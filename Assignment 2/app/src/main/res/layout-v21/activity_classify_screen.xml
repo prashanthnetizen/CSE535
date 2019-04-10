@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical"
+    tools:context=".ClassifyScreen">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:fadeScrollbars="true"
+        android:gravity="center"
+        android:text="@string/word_classifier"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textSize="36sp"
+        app:fontFamily="cursive" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:animateLayoutChanges="true"
+        android:fadingEdge="vertical"
+        android:gravity="center"
+        android:hapticFeedbackEnabled="true"
+        android:isScrollContainer="true"
+        android:padding="10dp"
+        android:spinnerMode="dropdown" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_file" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:saveEnabled="false"
+            android:text="@string/classify_video" />
+
+        <LinearLayout
+            android:id="@+id/result_col"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="20dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/result_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/detected_word_is"
+                android:textAppearance="@style/TextAppearance.AppCompat.Tooltip"
+                android:textSize="24sp"
+                android:textStyle="bold|italic"
+                app:fontFamily="sans-serif-black" />
+
+            <TextView
+                android:id="@+id/result_about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/about"
+                android:textAppearance="@android:style/TextAppearance.Material.Large"
+                android:textSize="36sp"
+                app:fontFamily="casual" />
+
+            <TextView
+                android:id="@+id/result_father"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/father"
+                android:textAppearance="@android:style/TextAppearance.Material.Large"
+                android:textSize="36sp"
+                app:fontFamily="casual" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
