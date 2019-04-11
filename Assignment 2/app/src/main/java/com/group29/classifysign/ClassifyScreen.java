@@ -85,7 +85,7 @@ public class ClassifyScreen extends AppCompatActivity {
                     readCsvData(fileNames.get(mSpinner.getSelectedItem()));
                     if (features != null) {
                         resultBox.setVisibility(View.VISIBLE);
-                        if (DecisionTree.rootTree(features)) {
+                        if (!DecisionTree.rootTree(features)) {
                             about.setVisibility(View.VISIBLE);
                             father.setVisibility(View.GONE);
                         } else {
