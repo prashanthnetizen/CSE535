@@ -140,15 +140,17 @@ public class ClassifyScreen extends AppCompatActivity {
         resultBox.setVisibility(View.GONE);
     }
 
-    private void updateDropDownItems(){
-        adapter.clear();
-        adapter.addAll(fileNames.keySet());
+    private void updateDropDownItems(String name){
+        adapter.add(name);
         adapter.setNotifyOnChange(true);
+        mSpinner.setSelection(adapter.getCount());
+
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode,
                                  Intent resultData)  {
+        String currentFileName;
 
         try {
 
@@ -160,9 +162,9 @@ public class ClassifyScreen extends AppCompatActivity {
                 Uri uri = null;
                 if (resultData != null) {
                     uri = resultData.getData();
-                    //readCsvData(uri);
-                    fileNames.put(new File(uri.getPath()).getName(),uri);
-                    updateDropDownItems();
+                    currentFileName = new File(uri.getPath()).getName();
+                    fileNames.put(currentFileName,uri);
+                    updateDropDownItems(currentFileName);
                     Log.i("PRASH", "Uri: " + uri.toString());
                 }
             }
