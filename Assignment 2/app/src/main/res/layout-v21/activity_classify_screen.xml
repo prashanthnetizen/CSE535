@@ -92,6 +92,7 @@
                 android:textAppearance="@android:style/TextAppearance.Material.Large"
                 android:textSize="36sp"
                 app:fontFamily="casual" />
+
         </LinearLayout>
 
     </LinearLayout>

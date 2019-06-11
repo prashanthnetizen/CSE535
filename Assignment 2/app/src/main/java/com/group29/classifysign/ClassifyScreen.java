@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
@@ -52,6 +53,7 @@ public class ClassifyScreen extends AppCompatActivity {
     private double features[] = null;
     private Map <String,Uri> fileNames = new HashMap<String,Uri>();
     private ArrayAdapter<String> adapter = null;
+    private long startTime;
 
     private static final int READ_REQUEST_CODE = 42;
 
@@ -73,7 +75,6 @@ public class ClassifyScreen extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
-                Log.d("TEST","takka");
                 startActivityForResult(intent, READ_REQUEST_CODE);
             }
         });
@@ -82,16 +83,22 @@ public class ClassifyScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    readCsvData(fileNames.get(mSpinner.getSelectedItem()));
-                    if (features != null) {
-                        resultBox.setVisibility(View.VISIBLE);
-                        if (!DecisionTree.rootTree(features)) {
-                            about.setVisibility(View.VISIBLE);
-                            father.setVisibility(View.GONE);
-                        } else {
-                            about.setVisibility(View.GONE);
-                            father.setVisibility(View.VISIBLE);
+                    if(mSpinner.getSelectedItem() != null) {
+                        startTime = System.currentTimeMillis();
+                        readCsvData(fileNames.get(mSpinner.getSelectedItem()));
+                        if (features != null) {
+                            resultBox.setVisibility(View.VISIBLE);
+                            if (!DecisionTree.rootTree(features)) {
+                                about.setVisibility(View.VISIBLE);
+                                father.setVisibility(View.GONE);
+                            } else {
+                                about.setVisibility(View.GONE);
+                                father.setVisibility(View.VISIBLE);
+                            }
                         }
+                        Toast.makeText(ClassifyScreen.this, "Execution Time : " + (System.currentTimeMillis() - startTime) + "ms", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(ClassifyScreen.this, "No File has been loaded into the Application!", Toast.LENGTH_LONG).show();
                     }
                 }catch(IOException iox){
                     iox.printStackTrace();
@@ -132,7 +139,7 @@ public class ClassifyScreen extends AppCompatActivity {
         }
         for(int i = 0; i<22; i++){
             features[i] = features[i]/reader.getLinesRead();
-            Log.d("PRASH",""+features[i]);
+            Log.d("Features",""+features[i]);
         }
     }
 

@@ -59,6 +59,7 @@ public class BradyActivity extends AppCompatActivity {
     private AlertDialog mAlertDialog, predictAlert, numberPickDialog;
     private double smoothedData[] = null;
     private static DecimalFormat df2 = new DecimalFormat("#.##");
+    private long startTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,7 @@ public class BradyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
+                    startTime = System.currentTimeMillis();
                     readCsvData(fileNames.get(mSpinner.getSelectedItem()));
                     plotForGraph();
                 }catch(Exception io){
@@ -156,13 +158,18 @@ public class BradyActivity extends AppCompatActivity {
         dialogBuilder.setTitle("Pick the Starting Minute for Prediction");
         dialogBuilder.setMessage("Pick a number to serve as the starting index for the 4-minute range.");
         dialogBuilder.setPositiveButton("Predict", new DialogInterface.OnClickListener() {
+            long totalTime = 0;
+            String message;
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                startTime = System.currentTimeMillis();
                 if(calculatePredictionResult(pickNum.getValue())){
-                    predictAlert.setMessage("Bradycardia likely to occur");
+                    message = "Bradycardia likely to occur";
                 } else {
-                    predictAlert.setMessage("Bradycardia will not occur");
+                    message = "Bradycardia will not occur";
                 }
+                message += "\nExecution Time : "+ (System.currentTimeMillis() - startTime) + " ms";
+                predictAlert.setMessage(message);
                 predictAlert.show();
             }
         });
@@ -178,6 +185,7 @@ public class BradyActivity extends AppCompatActivity {
 
     private void plotForGraph(){
         String message;
+        long totalTime = 0;
         int  i,count=0;
         double fp=0,fn=0;
         smoothedData();
@@ -204,15 +212,17 @@ public class BradyActivity extends AppCompatActivity {
         mGraphView.addSeries(pointGraphs);
         mGraphView.getViewport().setMaxX(31);
 
-
+        totalTime = (System.currentTimeMillis() - startTime);
         // Displaying Results in Dialog
         if(count != 0) {
             message = "BradyCardia Points Detected : " + count;
             message += "\nFalse Positives Rate: " + df2.format(fp / 30);
             message += "\nFalse Negatives Rate: " + df2.format(fn / 30);
         }
-        else
+        else {
             message = "No Bradycardia Detected.";
+        }
+        message += "\nExecution Time: " + totalTime + " ms";
         mAlertDialog.setMessage(message);
         mAlertDialog.show();
     }
